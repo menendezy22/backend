@@ -1,0 +1,20 @@
+# Ignore node_modules
+node_modules/
+
+# Ignore other typical files and directories
+.DS_Store
+.env
+*.log
+*.tmp
+*.swp
+
+# Ignore uploads directory
+# (If you want to include it, make sure it's not ignored)
+# !uploads/
+
+# Include uploads directory
+uploads/
+
+# Ignore build and dist directories (if applicable)
+dist/
+build/
