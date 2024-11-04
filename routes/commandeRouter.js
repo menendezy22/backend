@@ -3,6 +3,7 @@ import {
   addCommande,
   deleteCommande,
   getAllCommande,
+  getAllDataForChart,
   getAllUserWithAllCommandsMade,
   getCommandesByUserId,
   getOneCommandeById,
@@ -21,5 +22,7 @@ commandeRouter.patch("/commandes/:id/status", updateCommandeStatus);
 commandeRouter.get("/allCommandesByUser", getAllUserWithAllCommandsMade);
 
 commandeRouter.get("/commandes/user/:userId", getCommandesByUserId);
+
+commandeRouter.get("/chart", getAllDataForChart);
 
 export default commandeRouter;

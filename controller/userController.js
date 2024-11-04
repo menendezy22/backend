@@ -2,6 +2,13 @@ import multer from "multer";
 import path from "path";
 import User from "../model/user.js";
 import bcrypt from "bcrypt";
+import fs from "fs";
+
+import { fileURLToPath } from "url";
+
+// Get the directory name from the current file URL
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 import jwt from "jsonwebtoken";
 
@@ -111,5 +118,94 @@ export const singin = async (req, res) => {
   } catch (error) {
     console.error(error); // Log the actual error for debugging
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getUserById = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const photoPath = path.join(
+      __dirname,
+      "../uploads",
+      path.basename(user.photo)
+    );
+
+    fs.stat(photoPath, (err, stats) => {
+      if (err || !stats.isFile()) {
+        return res.status(404).json({ message: "Photo not found" });
+      }
+
+      fs.readFile(photoPath, (err, data) => {
+        if (err) {
+          return res.status(500).json({ message: "Error reading photo" });
+        }
+
+        const photoBase64 = data.toString("base64");
+        const photoBlob = `data:image/jpeg;base64,${photoBase64}`;
+
+        res.status(200).json({
+          user,
+          photo: photoBlob,
+        });
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  try {
+    // Extract user data from request body
+    const { nom, prenom, adresse, phone, email, nifstat, cin } = req.body;
+
+    // Prepare updated user data
+    const updatedData = {
+      nom,
+      prenom,
+      adresse,
+      phone,
+      email,
+      nifstat,
+      cin,
+    };
+
+    // Check if a new photo file is uploaded
+    if (req.file) {
+      updatedData.photo = req.file.path; // Update the photo path if a new file is uploaded
+    }
+
+    // Get the user ID from the URL parameters
+    const userId = req.params.id;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    // If the user is not found, respond with an error
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update the user without changing the password
+    await User.findByIdAndUpdate(userId, updatedData, { new: true });
+
+    // Respond with the updated user information
+    res
+      .status(200)
+      .json({ message: "User updated successfully", user: updatedData });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };

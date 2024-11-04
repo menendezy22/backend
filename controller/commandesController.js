@@ -228,3 +228,14 @@ export const getCommandesByUserId = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getAllDataForChart = async (req, res) => {
+  // recuperer toutes les commandes
+  try {
+    const commandes = await Commande.find();
+
+    res.status(200).json(commandes);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

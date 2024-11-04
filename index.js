@@ -45,7 +45,7 @@ app.use("/api/lot", lotRouter);
 app.use("/api/loyer", louerRouter);
 app.use("/api/produit", produitRouter);
 app.use("/api/user", userRouter);
-app.use("/api/commande",  commandeRouter);
+app.use("/api/commande", commandeRouter);
 app.use("/api/facture", factureRouter);
 app.use("/api/bl", blRouter);
 app.use("/api/stock", stockRouter);
@@ -55,7 +55,6 @@ app.use("/api/rendement", rendementRouter);
 app.use("/api/ristourne", ristourneRouter);
 app.use("/api/alerteStock", alerteStockRouter);
 app.use("/api/stock-history", stockHistoryRouter);
-
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");
